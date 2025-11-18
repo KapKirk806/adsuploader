@@ -1,0 +1,36 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.site-layout-content {
+  padding: 24px;
+  background: #fff;
+  min-height: 360px;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+}
+
+.upload-dragger {
+  padding: 40px 0;
+}
+
+.stats-card {
+  text-align: center;
+}
+
+.stats-value {
+  font-size: 30px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.stats-label {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-top: 8px;
+}
