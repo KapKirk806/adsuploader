@@ -1,87 +1,427 @@
-# AdsUploader - Meta Ads Bulk Upload Automation
+# AdsUploader
 
-A complete clone of AdsUploader.com and Rapid-Ads.com - automate bulk creative testing for Meta (Facebook/Instagram) Ads.
+A professional bulk ad upload automation platform for Meta (Facebook/Instagram) Ads. Upload 100+ ad creatives in minutes instead of hours.
 
-## 🚀 Features
+## 🚀 Overview
+
+AdsUploader is a full-stack web application that automates the tedious process of creating Meta ad campaigns. Instead of manually uploading ads one-by-one through Meta Ads Manager, users can:
+
+- Upload 100+ images/videos at once
+- Automatically detect variations (image_v1, image_v2, etc.)
+- Create campaigns, ad sets, and ads via Meta Marketing API
+- Import files directly from Google Drive
+- Collaborate with team members
+- Track job progress in real-time
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Documentation](#documentation)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+
+## ✨ Features
 
 ### Core Features
-- **Bulk Upload**: Upload 100+ ad creatives in minutes
-- **Automatic Variation Detection**: Smart grouping of creative variations (image_v1, image_v2, etc.)
-- **Campaign Templates**: Save and reuse campaign configurations
-- **Job Queue Processing**: Async processing with BullMQ and Redis
-- **Progress Tracking**: Real-time job progress and status updates
-- **Meta API Integration**: Direct publishing to Meta Ads (with mock mode for development)
-- **File Processing**: Automatic aspect ratio detection, thumbnail generation, metadata extraction
+
+#### 🎯 Bulk Ad Upload
+- Upload up to 100 files at once (images: JPG, PNG, GIF / videos: MP4, MOV)
+- Drag-and-drop interface with Ant Design Upload component
+- Automatic file processing with metadata extraction (dimensions, aspect ratios, duration)
+- Real-time progress tracking with job queue system
+
+#### 🔄 Variation Detection
+- Intelligent pattern matching for file variations
+- Supports multiple naming conventions:
+  - Sequential numbers: `image_v1`, `image_v2`, `image_001`, `image_002`
+  - Letters: `image_a`, `image_variant_a`
+  - Parentheses: `image(1)`, `image(2)`
+- Groups related files automatically for A/B testing
+
+#### 📝 Campaign Templates
+- Save campaign configurations as reusable templates
+- Set default templates for quick uploads
+- Template includes: objective, campaign settings, ad set config, ad config
+- CRUD operations with modal-based UI
+
+#### 📊 Job Management
+- Real-time job progress tracking with BullMQ + Redis
+- Job statuses: pending → processing → completed/failed/cancelled
+- Detailed progress: total ads, completed ads, failed ads, percentage
+- Search, filter, sort jobs
+- Bulk operations (cancel multiple jobs)
+- Export to CSV
 
 ### Advanced Features
-- **Multi-Format Support**: Images (JPG, PNG, GIF, WebP) and Videos (MP4, MOV, AVI)
-- **Aspect Ratio Auto-Detection**: Automatically detects 1:1, 1.91:1, 4:5, 9:16, 16:9 formats
-- **Template System**: Reusable campaign configurations with default templates
-- **Error Handling**: Comprehensive error logging and retry mechanisms
-- **Rate Limiting**: API rate limiting for security
-- **File Validation**: Type and size validation before upload
 
-## 📊 Tech Stack
+#### 🔐 Authentication & Authorization
+- Email/password authentication with bcrypt hashing
+- Facebook OAuth integration for seamless Meta account connection
+- JWT-based session management
+- Protected routes with React Router
+- Password reset flow with email tokens
+
+#### 👥 Team Collaboration
+- Invite team members by email
+- Role-based access control (owner/admin/member)
+- Team member management (view, edit roles, remove)
+- Activity audit logs
+
+#### 📱 Meta API Integration
+- Direct integration with Meta Marketing API
+- Sync ad accounts from Meta
+- Create campaigns, ad sets, and ads programmatically
+- Upload images and videos to Meta
+- Real API with mock fallback for development
+
+#### ☁️ Google Drive Integration
+- OAuth 2.0 authentication with Google
+- Browse and select files from Google Drive
+- Filter by media types (images/videos)
+- Multi-file selection
+- Direct import to upload flow
+
+#### 📈 Activity Logs
+- Complete audit trail of all user actions
+- Track: create, update, delete, login, logout, upload, publish
+- Search and filter logs by action, user, date range
+- IP address and user agent tracking
+- Pagination and sorting
+
+#### ⚙️ User Profile & Settings
+- Edit profile (name, email, avatar)
+- Change password with validation
+- Upload profile picture
+- Notification preferences (email notifications, job completion, errors)
+- Timezone and currency settings
+- Account deletion (danger zone)
+
+### UX Enhancements
+
+#### 🔍 Search & Filter
+- Search jobs by ID, campaign ID, status
+- Filter activity logs by action type, date range
+- Filter ad accounts, templates, team members
+- Real-time search results
+
+#### 📊 Sorting & Pagination
+- Sort all tables by any column
+- Default sorting (newest first for jobs)
+- Page size selector (10/20/50/100 items)
+- Show total count
+- Responsive pagination
+
+#### ✅ Bulk Operations
+- Select multiple jobs with checkboxes
+- Bulk cancel pending/processing jobs
+- Selection counter and clear button
+- Disabled states for completed/failed items
+
+#### 📥 Export Functionality
+- Export jobs to CSV
+- Auto-generated filename with timestamp
+- All job data included (ID, status, progress, dates)
+
+#### 💡 Tooltips & Help
+- Helpful tooltips on action buttons
+- Inline help text for complex features
+- Empty states with helpful messages
+- Loading skeletons (Ant Design built-in)
+
+#### 🛡️ Error Handling
+- React Error Boundary catches all component errors
+- Friendly error messages for users
+- Development-only error details
+- Reload and retry buttons
+- Form validation with helpful messages
+
+## 🛠 Tech Stack
 
 ### Backend
-- **Runtime**: Node.js + TypeScript
+
+- **Runtime**: Node.js 18+
 - **Framework**: Express.js
-- **Database**: PostgreSQL
-- **Cache/Queue**: Redis + BullMQ
+- **Language**: TypeScript
+- **Database**: PostgreSQL 14+
+- **Cache/Queue**: Redis 7+
+- **Job Queue**: BullMQ
+- **Authentication**: JWT + bcrypt
 - **File Processing**: Sharp (images), FFmpeg (videos)
-- **Authentication**: Passport.js + JWT
-- **Testing**: Jest + Supertest
+- **External APIs**:
+  - Meta Marketing API
+  - Google Drive API (googleapis)
+
+**Key Backend Libraries**:
+- `express` - Web framework
+- `pg` - PostgreSQL client
+- `ioredis` - Redis client
+- `bullmq` - Job queue
+- `jsonwebtoken` - JWT tokens
+- `bcrypt` - Password hashing
+- `multer` - File uploads
+- `winston` - Logging
+- `helmet` - Security headers
+- `cors` - CORS handling
 
 ### Frontend
-- **Framework**: React 18 + TypeScript
+
+- **Framework**: React 18
+- **Language**: TypeScript
 - **Build Tool**: Vite
 - **UI Library**: Ant Design 5
-- **Styling**: Tailwind CSS
+- **Routing**: React Router 6
 - **State Management**: Zustand
-- **Routing**: React Router v6
 - **HTTP Client**: Axios
+- **Charts**: Recharts
+- **Date Handling**: dayjs
+- **Styling**: CSS + Ant Design themes
 
-## 🏗️ Project Structure
+**Key Frontend Libraries**:
+- `react` + `react-dom` - Core React
+- `antd` + `@ant-design/icons` - UI components
+- `react-router-dom` - Routing
+- `zustand` - State management
+- `axios` - API calls
+- `recharts` - Charts for analytics
+- `react-dropzone` - File drag-and-drop
+
+### DevOps & Tools
+
+- **Version Control**: Git
+- **Package Manager**: npm
+- **Code Quality**: ESLint, TypeScript
+- **Testing**: Jest (configured, not fully implemented)
+- **Database Migrations**: SQL files
+
+## 🏗 Architecture
+
+### System Architecture
 
 ```
-adsuploader/
-├── backend/
-│   ├── src/
-│   │   ├── config/          # Database, Redis, Logger configs
-│   │   ├── controllers/     # API controllers
-│   │   ├── middleware/      # Auth, upload, error handling
-│   │   ├── models/          # Database models
-│   │   ├── routes/          # API routes
-│   │   ├── services/        # Business logic (Meta API, Job Queue)
-│   │   ├── utils/           # Utilities (file processor, variation detector)
-│   │   ├── types/           # TypeScript types
-│   │   └── server.ts        # Main server file
-│   ├── migrations/          # Database migrations
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── pages/           # Page components
-│   │   ├── services/        # API client
-│   │   ├── store/           # State management
-│   │   ├── types/           # TypeScript types
-│   │   └── App.tsx          # Main app component
-│   └── package.json
-│
-└── README.md
+┌─────────────────────────────────────────────────────────────┐
+│                         Frontend (React)                     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │   Pages     │  │ Components  │  │   Services  │         │
+│  │             │  │             │  │             │         │
+│  │ - Dashboard │  │ - Layout    │  │ - API       │         │
+│  │ - Upload    │  │ - Protected │  │ - Auth      │         │
+│  │ - Jobs      │  │   Route     │  │             │         │
+│  │ - Templates │  │ - Error     │  │             │         │
+│  │ - Team      │  │   Boundary  │  │             │         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+└─────────────────────────────────────────────────────────────┘
+                            │ HTTP/REST
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      Backend (Node.js/Express)               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │   Routes    │  │ Controllers │  │  Services   │         │
+│  │             │  │             │  │             │         │
+│  │ - Auth      │  │ - Auth      │  │ - Meta API  │         │
+│  │ - Jobs      │  │ - Jobs      │  │ - Google    │         │
+│  │ - Uploads   │  │ - Uploads   │  │   Drive     │         │
+│  │ - Templates │  │ - Templates │  │ - Job Queue │         │
+│  │ - Team      │  │ - Team      │  │ - File      │         │
+│  └─────────────┘  └─────────────┘  │   Processor │         │
+│                                     └─────────────┘         │
+└─────────────────────────────────────────────────────────────┘
+         │                    │                    │
+         ▼                    ▼                    ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  PostgreSQL  │    │    Redis     │    │  Meta API    │
+│              │    │              │    │              │
+│ - Users      │    │ - Job Queue  │    │ - Campaigns  │
+│ - Jobs       │    │ - Sessions   │    │ - Ad Sets    │
+│ - Templates  │    │ - Cache      │    │ - Ads        │
+│ - Team       │    │              │    │ - Images     │
+└──────────────┘    └──────────────┘    └──────────────┘
 ```
 
-## 🚦 Getting Started
+### Data Flow
+
+#### 1. User Upload Flow
+
+```
+User selects files → Frontend validates → Upload to backend
+                                              ↓
+                                    Create job in database
+                                              ↓
+                                    Add job to BullMQ queue
+                                              ↓
+                                    Worker processes job:
+                                    1. Extract file metadata
+                                    2. Detect variations
+                                    3. Upload to Meta API
+                                    4. Create ads
+                                    5. Update progress
+                                              ↓
+                                    Job completed/failed
+                                              ↓
+                                    Frontend polls for updates
+```
+
+#### 2. Authentication Flow
+
+```
+User enters credentials → Backend validates
+                              ↓
+                    Check bcrypt hash (email/password)
+                    OR validate OAuth token (Facebook)
+                              ↓
+                    Generate JWT token
+                              ↓
+                    Return token to frontend
+                              ↓
+                    Store in localStorage
+                              ↓
+                    Include in all subsequent requests
+```
+
+### Database Schema
+
+**Key Tables**:
+
+1. **users** - User accounts
+   - id, email, password_hash, name, avatar_url, role, facebook_id
+
+2. **ad_accounts** - Synced Meta ad accounts
+   - id, user_id, facebook_ad_account_id, name, currency, timezone
+
+3. **campaign_templates** - Reusable campaign configs
+   - id, user_id, name, objective, campaign_config, adset_config, ad_config
+
+4. **upload_jobs** - Bulk upload jobs
+   - id, user_id, status, total_ads, completed_ads, progress_percentage
+
+5. **creatives** - Individual ad creatives
+   - id, job_id, filename, type, aspect_ratio, variation_group
+
+6. **team_members** - Team collaboration
+   - id, user_id, role, invited_by, status
+
+7. **activity_logs** - Audit trail
+   - id, user_id, action, resource_type, description, ip_address
+
+8. **google_drive_connections** - OAuth tokens
+   - id, user_id, access_token, refresh_token, expires_at
+
+### API Design
+
+**RESTful API Endpoints**:
+
+```
+Authentication:
+POST   /api/auth/register          - Register new user
+POST   /api/auth/login             - Login with email/password
+GET    /api/auth/facebook          - Get Facebook OAuth URL
+GET    /api/auth/facebook/callback - Handle OAuth callback
+GET    /api/auth/me                - Get current user
+POST   /api/auth/change-password   - Change password
+POST   /api/auth/forgot-password   - Request password reset
+POST   /api/auth/reset-password    - Reset password with token
+PUT    /api/auth/profile           - Update profile
+POST   /api/auth/avatar            - Upload avatar
+DELETE /api/auth/account           - Delete account
+
+Ad Accounts:
+GET    /api/ad-accounts            - List user's ad accounts
+POST   /api/ad-accounts/sync       - Sync from Meta API
+GET    /api/ad-accounts/:id        - Get single account
+DELETE /api/ad-accounts/:id        - Remove account
+
+Templates:
+GET    /api/templates              - List templates
+POST   /api/templates              - Create template
+GET    /api/templates/:id          - Get template
+PUT    /api/templates/:id          - Update template
+DELETE /api/templates/:id          - Delete template
+POST   /api/templates/:id/set-default - Set default
+
+Uploads:
+POST   /api/uploads/files          - Upload files
+GET    /api/uploads/:id/files      - Get job files
+POST   /api/uploads/:id/publish    - Publish to Meta
+
+Jobs:
+GET    /api/jobs                   - List jobs (with filters)
+GET    /api/jobs/:id               - Get job details
+GET    /api/jobs/:id/progress      - Get real-time progress
+DELETE /api/jobs/:id               - Cancel job
+GET    /api/jobs/stats             - Get job statistics
+
+Team:
+GET    /api/team                   - List team members
+POST   /api/team/invite            - Invite member
+PUT    /api/team/:id               - Update member role
+DELETE /api/team/:id               - Remove member
+
+Activity Logs:
+GET    /api/activity-logs          - Get audit logs (with filters)
+
+Google Drive:
+GET    /api/google-drive/connect   - Get OAuth URL
+GET    /api/google-drive/callback  - Handle OAuth callback
+GET    /api/google-drive/files     - List files
+GET    /api/google-drive/status    - Check connection status
+
+Settings:
+GET    /api/settings               - Get user settings
+PUT    /api/settings               - Update settings
+```
+
+### Job Queue Architecture
+
+**BullMQ Worker Process**:
+
+```typescript
+// Job processing flow
+1. Job received from queue
+2. Update status to "processing"
+3. For each creative:
+   a. Read file from uploads directory
+   b. Extract metadata (Sharp for images, FFmpeg for videos)
+   c. Upload to Meta API (create image/video object)
+   d. Create ad creative in Meta
+   e. Create ad in ad set
+   f. Update progress
+   g. Handle errors (retry or mark as failed)
+4. Update status to "completed" or "failed"
+5. Log completion time
+```
+
+**Why BullMQ?**
+- Redis-backed queue for reliability
+- Job retries with exponential backoff
+- Progress tracking
+- Concurrent processing (multiple workers)
+- Scheduled jobs support
+
+## 📖 Documentation
+
+Comprehensive documentation is available in the `/docs` directory:
+
+- [Quick Start Guide](./docs/quick-start.md) - Get up and running in 5 minutes
+- [Architecture Deep Dive](./docs/architecture.md) - Detailed system design
+- [API Reference](./docs/api-reference.md) - Complete API documentation
+- [Features Guide](./docs/features.md) - How to use each feature
+- [Development Guide](./docs/development.md) - For developers
+- [Deployment Guide](./docs/deployment.md) - Production deployment
+- [Design Decisions](./docs/design-decisions.md) - Why we built it this way
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js >= 18.x
-- PostgreSQL >= 14.x
-- Redis >= 6.x
-- FFmpeg (for video processing)
+- Node.js 18+ and npm
+- PostgreSQL 14+
+- Redis 7+
+- Meta (Facebook) Developer App credentials
+- Google Cloud Console project (for Google Drive)
 
-### Installation
+### Quick Start
 
 1. **Clone the repository**
 ```bash
@@ -89,24 +429,31 @@ git clone <repository-url>
 cd adsuploader
 ```
 
-2. **Set up the database**
+2. **Install dependencies**
 ```bash
-createdb adsuploader
-psql -d adsuploader -f backend/migrations/001_initial_schema.sql
-```
-
-3. **Install backend dependencies**
-```bash
+# Backend
 cd backend
 npm install
-cp .env.example .env
-# Edit .env with your configuration
-```
 
-4. **Install frontend dependencies**
-```bash
+# Frontend
 cd ../frontend
 npm install
+```
+
+3. **Configure environment variables**
+```bash
+# Backend .env
+cp backend/.env.example backend/.env
+# Edit backend/.env with your credentials
+```
+
+4. **Set up database**
+```bash
+# Create database
+createdb adsuploader
+
+# Run migrations
+psql -d adsuploader -f backend/migrations/001_initial_schema.sql
 ```
 
 5. **Start Redis**
@@ -114,180 +461,100 @@ npm install
 redis-server
 ```
 
-### Running the Application
-
-**Development Mode:**
-
+6. **Start backend**
 ```bash
-# Terminal 1 - Backend
 cd backend
 npm run dev
+```
 
-# Terminal 2 - Frontend
+7. **Start frontend**
+```bash
 cd frontend
 npm run dev
 ```
 
-The application will be available at:
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:5000`
-- API Documentation: `http://localhost:5000/api`
+8. **Access the application**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
 
-**Production Mode:**
+See [Quick Start Guide](./docs/quick-start.md) for detailed setup instructions.
 
-```bash
-# Build backend
-cd backend
-npm run build
-npm start
+## 📁 Project Structure
 
-# Build frontend
-cd frontend
-npm run build
-npm run preview
 ```
-
-## 📝 API Endpoints
-
-### Templates
-- `GET /api/templates` - List all templates
-- `POST /api/templates` - Create template
-- `GET /api/templates/:id` - Get template
-- `PUT /api/templates/:id` - Update template
-- `DELETE /api/templates/:id` - Delete template
-- `POST /api/templates/:id/set-default` - Set as default
-
-### Uploads
-- `POST /api/uploads/files` - Upload files
-- `GET /api/uploads/:jobId/files` - Get job files
-- `POST /api/uploads/:jobId/publish` - Publish to Meta
-
-### Jobs
-- `GET /api/jobs` - List jobs
-- `GET /api/jobs/:id` - Get job details
-- `GET /api/jobs/:id/progress` - Get job progress
-- `DELETE /api/jobs/:id` - Cancel job
-- `GET /api/jobs/stats` - Get statistics
-
-## 🎯 How It Works
-
-1. **Upload**: Users upload images/videos via drag-and-drop
-2. **Detection**: System automatically detects variation groups (e.g., product_v1, product_v2)
-3. **Processing**: Files are processed to extract metadata (dimensions, aspect ratios, duration)
-4. **Configuration**: Users select a campaign template with pre-configured settings
-5. **Publishing**: Job is queued and processed asynchronously via BullMQ
-6. **Meta API**: Each creative is uploaded to Meta and ads are created via the Marketing API
-7. **Tracking**: Real-time progress updates show completion status
-
-## 🔑 Key Differences from Competitors
-
-### vs AdsUploader.com
-- ✅ Open source
-- ✅ Self-hosted option
-- ✅ No monthly fees
-- ✅ Full customization
-
-### vs Rapid-Ads.com
-- ✅ Complete source code access
-- ✅ Advanced variation detection
-- ✅ Built-in testing with mocks
-- ✅ Modern tech stack
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-npm test
-npm run test:integration
-
-# Frontend tests (when implemented)
-cd frontend
-npm test
+adsuploader/
+├── backend/
+│   ├── src/
+│   │   ├── config/          # Configuration (DB, Redis, Logger)
+│   │   ├── controllers/     # Request handlers
+│   │   ├── middleware/      # Auth, error handling, rate limiting
+│   │   ├── routes/          # API route definitions
+│   │   ├── services/        # Business logic (Meta API, Google Drive, Queue)
+│   │   ├── utils/           # Helpers (variation detection, file processing)
+│   │   ├── types/           # TypeScript type definitions
+│   │   └── server.ts        # Express app entry point
+│   ├── migrations/          # SQL database migrations
+│   ├── uploads/             # Temporary file storage
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Reusable React components
+│   │   ├── pages/           # Page components (Dashboard, Upload, etc.)
+│   │   ├── services/        # API client
+│   │   ├── store/           # Zustand state management
+│   │   ├── types/           # TypeScript interfaces
+│   │   ├── App.tsx          # Main app component with routing
+│   │   ├── main.tsx         # React entry point
+│   │   └── index.css        # Global styles
+│   ├── public/              # Static assets
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+│
+├── docs/                    # Documentation
+├── README.md
+└── .gitignore
 ```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Backend (`.env`):
-```env
-# Server
-PORT=5000
-NODE_ENV=development
-
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/adsuploader
-
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# JWT
-JWT_SECRET=your-secret-key
-JWT_EXPIRES_IN=7d
-
-# Facebook OAuth (optional for development)
-FACEBOOK_APP_ID=your-app-id
-FACEBOOK_APP_SECRET=your-app-secret
-
-# Meta API
-META_API_VERSION=v18.0
-```
-
-## 📈 Performance
-
-- **Upload Speed**: 100 files in ~5-10 minutes
-- **API Publishing**: Direct to Meta Marketing API
-- **Concurrent Processing**: 5 jobs simultaneously
-- **Queue Management**: Automatic retry with exponential backoff
-- **Error Recovery**: Individual creative failures don't stop entire job
-
-## 🚧 Roadmap
-
-### Phase 1 (Current)
-- [x] Backend API with all core features
-- [x] Frontend UI with dashboard, upload, templates, jobs
-- [x] Meta API integration with mock mode
-- [x] Job queue processing
-- [x] Variation detection
-
-### Phase 2 (Future)
-- [ ] Facebook OAuth authentication
-- [ ] Google Drive integration
-- [ ] Team collaboration features
-- [ ] Advanced analytics dashboard
-- [ ] A/B testing tools
-- [ ] Automated optimization rules
-
-### Phase 3 (Advanced)
-- [ ] Multi-platform support (TikTok, Google Ads)
-- [ ] AI-powered copy generation
-- [ ] Predictive performance scoring
-- [ ] White-label options
-- [ ] API for external integrations
-
-## 🐛 Known Limitations
-
-1. **Authentication**: Facebook OAuth not yet implemented (mock auth for development)
-2. **Google Drive**: Integration not yet implemented
-3. **Team Features**: Multi-user collaboration pending
-4. **Meta API**: Requires real Facebook App credentials for production use
-
-## 📜 License
-
-MIT
 
 ## 🤝 Contributing
 
-Contributions welcome! Please read the contributing guidelines first.
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-## 💬 Support
+### Development Workflow
 
-For issues and questions:
-- GitHub Issues: [Create an issue](https://github.com/yourusername/adsuploader/issues)
-- Documentation: See `/backend/README.md` and `/frontend/README.md`
+1. Create a feature branch from `main`
+2. Make your changes with clear commit messages
+3. Write/update tests as needed
+4. Update documentation
+5. Submit a pull request
 
-## 🎉 Acknowledgments
+### Code Style
 
-Built as a clone of AdsUploader.com and Rapid-Ads.com, demonstrating modern full-stack development practices.
+- TypeScript for all code
+- ESLint for linting
+- Prettier for formatting (recommended)
+- Follow existing patterns and naming conventions
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Ant Design** - Beautiful React UI components
+- **Meta Marketing API** - Ad creation and management
+- **BullMQ** - Reliable job queue system
+- **Sharp & FFmpeg** - Image and video processing
+
+## 📞 Support
+
+For support, please:
+- Open an issue on GitHub
+- Check the [documentation](./docs/)
+- Contact the development team
+
+---
+
+Built with ❤️ for marketers and advertisers who deserve better tools.
