@@ -22,6 +22,7 @@ import { apiLimiter } from './middleware/rateLimiter';
 import templateRoutes from './routes/templates';
 import uploadRoutes from './routes/uploads';
 import jobRoutes from './routes/jobs';
+import googleDriveRoutes from './routes/googleDrive';
 // import authRoutes from './routes/auth';
 // import userRoutes from './routes/users';
 // import adAccountRoutes from './routes/adAccounts';
@@ -108,6 +109,7 @@ app.get('/api', (req, res) => {
 app.use('/api/templates', templateRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/google-drive', googleDriveRoutes);
 // app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/ad-accounts', adAccountRoutes);

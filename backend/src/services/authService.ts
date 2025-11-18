@@ -5,7 +5,7 @@ import logger from '../config/logger';
 
 export class AuthService {
   private jwtSecret: string;
-  private jwtExpires In: string;
+  private jwtExpiresIn: string;
 
   constructor() {
     this.jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
