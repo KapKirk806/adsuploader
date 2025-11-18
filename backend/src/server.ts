@@ -18,13 +18,13 @@ import logger from './config/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { apiLimiter } from './middleware/rateLimiter';
 
-// Import routes (we'll create these next)
+// Import routes
+import templateRoutes from './routes/templates';
+import uploadRoutes from './routes/uploads';
+import jobRoutes from './routes/jobs';
 // import authRoutes from './routes/auth';
 // import userRoutes from './routes/users';
 // import adAccountRoutes from './routes/adAccounts';
-// import templateRoutes from './routes/templates';
-// import uploadRoutes from './routes/uploads';
-// import jobRoutes from './routes/jobs';
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
@@ -104,13 +104,13 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Mount routes (uncomment as we create them)
+// Mount routes
+app.use('/api/templates', templateRoutes);
+app.use('/api/uploads', uploadRoutes);
+app.use('/api/jobs', jobRoutes);
 // app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/ad-accounts', adAccountRoutes);
-// app.use('/api/templates', templateRoutes);
-// app.use('/api/uploads', uploadRoutes);
-// app.use('/api/jobs', jobRoutes);
 
 // 404 handler
 app.use(notFoundHandler);
