@@ -13,6 +13,8 @@ import {
   UploadOutlined,
   FileTextOutlined,
   UnorderedListOutlined,
+  FacebookOutlined,
+  TeamOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
@@ -20,6 +22,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useStore } from '../store/useStore';
+import { api } from '../services/api';
 
 const { Header, Sider, Content } = AntLayout;
 
@@ -50,6 +53,16 @@ export default function Layout() {
       icon: <UnorderedListOutlined />,
       label: 'Jobs',
     },
+    {
+      key: '/ad-accounts',
+      icon: <FacebookOutlined />,
+      label: 'Ad Accounts',
+    },
+    {
+      key: '/team',
+      icon: <TeamOutlined />,
+      label: 'Team',
+    },
   ];
 
   const userMenuItems = [
@@ -74,6 +87,18 @@ export default function Layout() {
     },
   ];
 
+  const handleUserMenuClick = async ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      await api.logout();
+      useStore.getState().setUser(null);
+      navigate('/login');
+    } else if (key === 'profile') {
+      navigate('/profile');
+    } else if (key === 'settings') {
+      navigate('/settings');
+    }
+  };
+
   return (
     <AntLayout className="app-layout">
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -96,7 +121,7 @@ export default function Layout() {
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: '16px', width: 64, height: 64 }}
           />
-          <Dropdown menu={{ items: userMenuItems }}>
+          <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }}>
             <Space style={{ cursor: 'pointer' }}>
               <Avatar src={user?.avatar_url} icon={<UserOutlined />} />
               <span>{user?.name || 'User'}</span>

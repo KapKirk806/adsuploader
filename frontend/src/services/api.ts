@@ -4,6 +4,9 @@ import type {
   UploadJob,
   Creative,
   JobStats,
+  User,
+  AdAccount,
+  TeamMember,
 } from '../types';
 
 class ApiService {
@@ -38,6 +41,52 @@ class ApiService {
         return Promise.reject(error);
       }
     );
+  }
+
+  // Authentication
+  async register(name: string, email: string, password: string): Promise<{ user: User; token: string }> {
+    const response = await this.client.post('/auth/register', { name, email, password });
+    return response.data;
+  }
+
+  async login(email: string, password: string): Promise<{ user: User; token: string }> {
+    const response = await this.client.post('/auth/login', { email, password });
+    return response.data;
+  }
+
+  async getCurrentUser(): Promise<User> {
+    const response = await this.client.get('/auth/me');
+    return response.data.user;
+  }
+
+  async getFacebookAuthUrl(): Promise<{ authUrl: string }> {
+    const response = await this.client.get('/auth/facebook');
+    return response.data;
+  }
+
+  async logout(): Promise<void> {
+    await this.client.post('/auth/logout');
+    localStorage.removeItem('auth_token');
+  }
+
+  // Ad Accounts
+  async getAdAccounts(): Promise<AdAccount[]> {
+    const response = await this.client.get('/ad-accounts');
+    return response.data.accounts;
+  }
+
+  async syncAdAccountsFromMeta(): Promise<AdAccount[]> {
+    const response = await this.client.post('/ad-accounts/sync');
+    return response.data.accounts;
+  }
+
+  async getAdAccount(id: number): Promise<AdAccount> {
+    const response = await this.client.get(`/ad-accounts/${id}`);
+    return response.data.account;
+  }
+
+  async deleteAdAccount(id: number): Promise<void> {
+    await this.client.delete(`/ad-accounts/${id}`);
   }
 
   // Templates
@@ -129,6 +178,26 @@ class ApiService {
   async getJobStats(): Promise<JobStats> {
     const response = await this.client.get('/jobs/stats');
     return response.data.stats;
+  }
+
+  // Team
+  async getTeamMembers(): Promise<TeamMember[]> {
+    const response = await this.client.get('/team');
+    return response.data.members;
+  }
+
+  async inviteTeamMember(email: string, role: 'admin' | 'member'): Promise<TeamMember> {
+    const response = await this.client.post('/team/invite', { email, role });
+    return response.data.member;
+  }
+
+  async updateTeamMember(id: number, data: { role?: string; status?: string }): Promise<TeamMember> {
+    const response = await this.client.put(`/team/${id}`, data);
+    return response.data.member;
+  }
+
+  async removeTeamMember(id: number): Promise<void> {
+    await this.client.delete(`/team/${id}`);
   }
 }
 

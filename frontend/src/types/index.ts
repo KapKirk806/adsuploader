@@ -65,3 +65,15 @@ export interface VariationGroup {
   files: string[];
   count: number;
 }
+
+export interface TeamMember {
+  id: number;
+  user_id: number;
+  name: string;
+  email: string;
+  avatar_url?: string;
+  role: 'owner' | 'admin' | 'member';
+  status: 'active' | 'pending' | 'inactive';
+  invited_by: number;
+  created_at: string;
+}

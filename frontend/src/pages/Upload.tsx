@@ -11,11 +11,12 @@ import {
   Space,
   Alert,
 } from 'antd';
-import { InboxOutlined, UploadOutlined, RocketOutlined } from '@ant-design/icons';
+import { InboxOutlined, UploadOutlined, RocketOutlined, GoogleOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import type { CampaignTemplate, Creative } from '../types';
+import GoogleDrivePicker from '../components/GoogleDrivePicker';
 
 const { Dragger } = AntUpload;
 const { Step } = Steps;
@@ -28,6 +29,7 @@ export default function UploadPage() {
   const [creatives, setCreatives] = useState<Creative[]>([]);
   const [jobId, setJobId] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showGooglePicker, setShowGooglePicker] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,6 +94,25 @@ export default function UploadPage() {
       console.error('Publish error:', error);
       message.error('Failed to publish job');
     }
+  };
+
+  const handleGoogleDriveSelect = (files: any[]) => {
+    // Convert Google Drive files to UploadFile format
+    const newFiles: UploadFile[] = files.map((file, index) => ({
+      uid: `google-drive-${file.id}`,
+      name: file.name,
+      status: 'done',
+      url: file.webViewLink,
+      // Store the Google Drive file ID for later download
+      originFileObj: {
+        ...file,
+        googleDriveId: file.id,
+      } as any,
+    }));
+
+    setFileList([...fileList, ...newFiles]);
+    setShowGooglePicker(false);
+    message.success(`Added ${files.length} files from Google Drive`);
   };
 
   const columns = [
@@ -176,7 +197,14 @@ export default function UploadPage() {
               </p>
             </Dragger>
 
-            <div style={{ marginTop: 16, textAlign: 'right' }}>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Button
+                icon={<GoogleOutlined />}
+                onClick={() => setShowGooglePicker(true)}
+                size="large"
+              >
+                Import from Google Drive
+              </Button>
               <Button
                 type="primary"
                 onClick={handleUpload}
@@ -221,6 +249,12 @@ export default function UploadPage() {
           />
         </Card>
       )}
+
+      <GoogleDrivePicker
+        visible={showGooglePicker}
+        onCancel={() => setShowGooglePicker(false)}
+        onSelect={handleGoogleDriveSelect}
+      />
     </div>
   );
 }

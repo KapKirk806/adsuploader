@@ -4,7 +4,13 @@ import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
 import Templates from './pages/Templates';
 import Jobs from './pages/Jobs';
+import AdAccounts from './pages/AdAccounts';
+import Team from './pages/Team';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import AuthCallback from './pages/AuthCallback';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -20,12 +26,24 @@ function App() {
     >
       <Router>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
+          {/* Protected routes */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="upload" element={<Upload />} />
             <Route path="templates" element={<Templates />} />
             <Route path="jobs" element={<Jobs />} />
+            <Route path="ad-accounts" element={<AdAccounts />} />
+            <Route path="team" element={<Team />} />
           </Route>
         </Routes>
       </Router>
