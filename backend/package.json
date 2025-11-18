@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:integration": "jest --testMatch='**/*.integration.test.ts'",
+    "test:integration": "node test-integration.js",
     "migrate": "node-pg-migrate",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down"
