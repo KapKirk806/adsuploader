@@ -98,6 +98,9 @@ export default function Login() {
           </Form.Item>
 
           <Form.Item>
+            <div style={{ textAlign: 'right', marginBottom: 16 }}>
+              <Link to="/forgot-password">Forgot password?</Link>
+            </div>
             <Button
               type="primary"
               htmlType="submit"

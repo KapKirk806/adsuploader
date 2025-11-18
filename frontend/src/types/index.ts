@@ -77,3 +77,17 @@ export interface TeamMember {
   invited_by: number;
   created_at: string;
 }
+
+export interface ActivityLog {
+  id: number;
+  user_id: number;
+  user_name: string;
+  user_email: string;
+  action: string;
+  resource_type: string;
+  resource_id?: number;
+  description: string;
+  ip_address?: string;
+  user_agent?: string;
+  created_at: string;
+}

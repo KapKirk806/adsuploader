@@ -7,6 +7,7 @@ import type {
   User,
   AdAccount,
   TeamMember,
+  ActivityLog,
 } from '../types';
 
 class ApiService {
@@ -67,6 +68,44 @@ class ApiService {
   async logout(): Promise<void> {
     await this.client.post('/auth/logout');
     localStorage.removeItem('auth_token');
+  }
+
+  async updateProfile(data: { name: string; email: string }): Promise<{ user: User }> {
+    const response = await this.client.put('/auth/profile', data);
+    return response.data;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await this.client.post('/auth/change-password', { currentPassword, newPassword });
+  }
+
+  async uploadAvatar(formData: FormData): Promise<{ avatar_url: string }> {
+    const response = await this.client.post('/auth/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    await this.client.post('/auth/forgot-password', { email });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await this.client.post('/auth/reset-password', { token, newPassword });
+  }
+
+  // Settings
+  async getSettings(): Promise<any> {
+    const response = await this.client.get('/settings');
+    return response.data.settings;
+  }
+
+  async updateSettings(settings: any): Promise<void> {
+    await this.client.put('/settings', settings);
+  }
+
+  async deleteAccount(): Promise<void> {
+    await this.client.delete('/auth/account');
   }
 
   // Ad Accounts
@@ -198,6 +237,19 @@ class ApiService {
 
   async removeTeamMember(id: number): Promise<void> {
     await this.client.delete(`/team/${id}`);
+  }
+
+  // Activity Logs
+  async getActivityLogs(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    action?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{ logs: ActivityLog[]; total: number }> {
+    const response = await this.client.get('/activity-logs', { params });
+    return response.data;
   }
 }
 
