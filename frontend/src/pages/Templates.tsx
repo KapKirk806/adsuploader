@@ -11,15 +11,24 @@ import {
   Select,
   message,
   Popconfirm,
+  Drawer,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  StarOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { api } from '../services/api';
 import type { CampaignTemplate } from '../types';
+import { AdvancedTemplateForm } from '../components/templates/AdvancedTemplateForm';
 
 export default function Templates() {
   const [templates, setTemplates] = useState<CampaignTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [advancedMode, setAdvancedMode] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<CampaignTemplate | null>(null);
   const [form] = Form.useForm();
 
@@ -40,10 +49,18 @@ export default function Templates() {
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = (advanced = false) => {
     setEditingTemplate(null);
     form.resetFields();
-    setModalVisible(true);
+    if (advanced) {
+      setAdvancedMode(true);
+    } else {
+      setModalVisible(true);
+    }
+  };
+
+  const handleCreateAdvanced = () => {
+    handleCreate(true);
   };
 
   const handleEdit = (template: CampaignTemplate) => {
@@ -167,9 +184,18 @@ export default function Templates() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <h1>Campaign Templates</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Create Template
-        </Button>
+        <Space>
+          <Button icon={<PlusOutlined />} onClick={() => handleCreate(false)}>
+            Quick Create
+          </Button>
+          <Button
+            type="primary"
+            icon={<ThunderboltOutlined />}
+            onClick={handleCreateAdvanced}
+          >
+            Advanced Mode
+          </Button>
+        </Space>
       </div>
 
       <Card>
@@ -181,8 +207,9 @@ export default function Templates() {
         />
       </Card>
 
+      {/* Quick Create Modal */}
       <Modal
-        title={editingTemplate ? 'Edit Template' : 'Create Template'}
+        title={editingTemplate ? 'Edit Template' : 'Quick Create Template'}
         open={modalVisible}
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
@@ -216,6 +243,26 @@ export default function Templates() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Advanced Mode Drawer */}
+      <Drawer
+        title="Advanced Template Configuration"
+        placement="right"
+        open={advancedMode}
+        onClose={() => setAdvancedMode(false)}
+        width="90%"
+        destroyOnClose
+      >
+        <AdvancedTemplateForm
+          initialTemplate={editingTemplate || undefined}
+          mode={editingTemplate ? 'edit' : 'create'}
+          onSubmit={(template) => {
+            setAdvancedMode(false);
+            loadTemplates();
+          }}
+          onCancel={() => setAdvancedMode(false)}
+        />
+      </Drawer>
     </div>
   );
 }
