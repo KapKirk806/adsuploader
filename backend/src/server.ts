@@ -17,6 +17,7 @@ import logger from './config/logger';
 // Import middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { apiLimiter } from './middleware/rateLimiter';
+import { requestLogger, errorLogger, performanceMonitor } from './middleware/logging';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -26,6 +27,7 @@ import uploadRoutes from './routes/uploads';
 import jobRoutes from './routes/jobs';
 import googleDriveRoutes from './routes/googleDrive';
 import teamRoutes from './routes/team';
+import monitoringRoutes from './routes/monitoring';
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
@@ -47,6 +49,10 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Compression middleware
 app.use(compression());
+
+// Request logging and tracing middleware
+app.use(requestLogger);
+app.use(performanceMonitor);
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -113,9 +119,13 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/google-drive', googleDriveRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/monitoring', monitoringRoutes);
 
 // 404 handler
 app.use(notFoundHandler);
+
+// Error logging middleware
+app.use(errorLogger);
 
 // Error handler (must be last)
 app.use(errorHandler);

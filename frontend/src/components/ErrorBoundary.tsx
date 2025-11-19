@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Result, Button } from 'antd';
+import { errorReporting } from '../services/errorReporting';
 
 interface Props {
   children: ReactNode;
@@ -32,8 +33,11 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo,
     });
 
-    // You can also log the error to an error reporting service here
-    // logErrorToService(error, errorInfo);
+    // Report error to monitoring service
+    errorReporting.reportComponentError(error, errorInfo, {
+      location: window.location.href,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   handleReset = (): void => {
